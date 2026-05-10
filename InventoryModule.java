@@ -1,5 +1,3 @@
-// ONLY ADDITIONS ARE MARKED WITH ⭐
-
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -49,8 +47,8 @@ public class InventoryModule {
             System.out.println("3. Search Product");
             System.out.println("4. Delete Product");
             System.out.println("5. Damaged Product");
-            System.out.println("6. Back");
-            System.out.println("7. Restock Product ⭐"); // NEW
+            System.out.println("6. Restock Product "); 
+            System.out.println("7. Back");
 
             System.out.print("--> Choice: ");
             int c = sc.nextInt();
@@ -65,14 +63,14 @@ public class InventoryModule {
                 deleteProduct();
             else if (c == 5)
                 damagedProduct();
-            else if (c == 7)
+            else if (c == 6)
                 restockProduct(); // NEW
             else
                 break;
         }
     }
 
-    // ⭐ UPDATED ADD PRODUCT (NO DUPLICATES)
+    
     public void addProduct() {
 
         System.out.print("ID: ");
@@ -111,7 +109,7 @@ public class InventoryModule {
         System.out.println("✔ Added");
     }
 
-    // ⭐ NEW FEATURE: RESTOCK EXISTING PRODUCT
+    
     public void restockProduct() {
 
         System.out.print("Enter Product ID: ");
