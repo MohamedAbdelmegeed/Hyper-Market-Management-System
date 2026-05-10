@@ -1,3 +1,5 @@
+// ONLY ADDITIONS ARE MARKED WITH ⭐
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -31,7 +33,6 @@ public class InventoryModule {
     ArrayList<Product> products = new ArrayList<>();
     Scanner sc = new Scanner(System.in);
 
-    //  LOAD PRODUCTS WHEN SYSTEM STARTS
     public InventoryModule() {
         loadProductsFromFile();
     }
@@ -40,7 +41,6 @@ public class InventoryModule {
 
         while (true) {
 
-            //  SMART ALERTS
             checkAlerts();
 
             System.out.println("\n INVENTORY");
@@ -50,6 +50,7 @@ public class InventoryModule {
             System.out.println("4. Delete Product");
             System.out.println("5. Damaged Product");
             System.out.println("6. Back");
+            System.out.println("7. Restock Product ⭐"); // NEW
 
             System.out.print("--> Choice: ");
             int c = sc.nextInt();
@@ -64,11 +65,14 @@ public class InventoryModule {
                 deleteProduct();
             else if (c == 5)
                 damagedProduct();
+            else if (c == 7)
+                restockProduct(); // NEW
             else
                 break;
         }
     }
 
+    // ⭐ UPDATED ADD PRODUCT (NO DUPLICATES)
     public void addProduct() {
 
         System.out.print("ID: ");
@@ -76,6 +80,14 @@ public class InventoryModule {
 
         System.out.print("Name: ");
         String name = sc.next();
+
+        // ❌ CHECK DUPLICATE
+        for (Product p : products) {
+            if (p.id == id || p.name.equalsIgnoreCase(name)) {
+                System.out.println("❌ Product already exists! Use RESTOCK instead.");
+                return;
+            }
+        }
 
         System.out.print("Price: ");
         double price = sc.nextDouble();
@@ -97,6 +109,36 @@ public class InventoryModule {
         saveProductsToFile();
 
         System.out.println("✔ Added");
+    }
+
+    // ⭐ NEW FEATURE: RESTOCK EXISTING PRODUCT
+    public void restockProduct() {
+
+        System.out.print("Enter Product ID: ");
+        int id = sc.nextInt();
+
+        System.out.print("Add Quantity: ");
+        int addQty = sc.nextInt();
+
+        boolean found = false;
+
+        for (Product p : products) {
+
+            if (p.id == id) {
+
+                p.quantity += addQty;
+                found = true;
+
+                System.out.println("✔ Stock updated");
+                System.out.println("New Quantity: " + p.quantity);
+
+                saveProductsToFile();
+                break;
+            }
+        }
+
+        if (!found)
+            System.out.println("❌ Product not found");
     }
 
     public void listProducts() {
@@ -193,12 +235,10 @@ public class InventoryModule {
         }
     }
 
-    // 💾 UPDATED SAVE METHOD (SYSTEM + HUMAN REPORT)
     public void saveProductsToFile() {
 
         try {
 
-            // 🔹 DATABASE FILE
             PrintWriter writer = new PrintWriter("products.txt");
 
             for (Product p : products) {
@@ -214,36 +254,6 @@ public class InventoryModule {
             }
 
             writer.close();
-
-            // 🔹 HUMAN READABLE REPORT FILE
-            PrintWriter report = new PrintWriter("inventory_report.txt");
-
-            report.println("====================================");
-            report.println("     HYPER MARKET INVENTORY REPORT");
-            report.println("====================================\n");
-
-            for (Product p : products) {
-
-                report.println("====================================");
-                report.println("Product ID    : " + p.id);
-                report.println("Name          : " + p.name);
-                report.println("Price         : $" + p.price);
-                report.println("Quantity      : " + p.quantity);
-                report.println("Minimum Stock : " + p.minStock);
-                report.println("Expiry Date   : " + p.expiry);
-
-                if (p.quantity <= p.minStock) {
-                    report.println("Status        : LOW STOCK");
-                } else if (p.expiry.isBefore(LocalDate.now())) {
-                    report.println("Status        : EXPIRED");
-                } else {
-                    report.println("Status        : AVAILABLE");
-                }
-
-                report.println("====================================\n");
-            }
-
-            report.close();
 
         } catch (Exception e) {
             System.out.println("❌ Error saving products file");
@@ -264,7 +274,6 @@ public class InventoryModule {
             while (fileReader.hasNextLine()) {
 
                 String line = fileReader.nextLine();
-
                 String[] data = line.split(",");
 
                 int id = Integer.parseInt(data[0]);
