@@ -83,7 +83,7 @@ public class Main {
                         if (role.equals("admin"))
                             marketing.menu(inventory.getProducts());
                         else
-                            sales.menu(inventory.getProducts(), user);
+                            sales.menu(inventory.getProducts(), user, marketing);
                         break;
 
                     case 4:
