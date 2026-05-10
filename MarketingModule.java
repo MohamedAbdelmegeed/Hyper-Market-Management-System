@@ -165,7 +165,7 @@ public class MarketingModule {
                 double finalPrice = Double.parseDouble(data[3]);
 
                 Offer o = new Offer(name, original, discount, 0);
-                o.finalPrice = finalPrice; // restore saved value
+                o.finalPrice = finalPrice;
 
                 offers.add(o);
             }
@@ -175,5 +175,21 @@ public class MarketingModule {
         } catch (Exception e) {
             System.out.println("❌ Error loading offers file");
         }
+    }
+
+    // ==============================
+    // ADDED: LINK FUNCTION (NO CHANGES ABOVE)
+    // ==============================
+
+    public Offer getOfferForProduct(String productName) {
+
+        for (Offer o : offers) {
+
+            if (o.productName.equalsIgnoreCase(productName)) {
+                return o;
+            }
+        }
+
+        return null;
     }
 }
