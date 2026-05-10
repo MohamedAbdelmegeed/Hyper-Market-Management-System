@@ -4,7 +4,7 @@ public class SalesModule {
 
     Scanner sc = new Scanner(System.in);
 
-    public void menu(ArrayList<Product> products, UserModule user) {
+    public void menu(ArrayList<Product> products, UserModule user, MarketingModule marketing) {
 
         while (true) {
 
@@ -15,13 +15,13 @@ public class SalesModule {
             int c = sc.nextInt();
 
             if (c == 1)
-                makeOrder(products, user);
+                makeOrder(products, user, marketing);
             else
                 break;
         }
     }
 
-    public void makeOrder(ArrayList<Product> products, UserModule user) {
+    public void makeOrder(ArrayList<Product> products, UserModule user, MarketingModule marketing) {
 
         // 🛒 AVAILABLE PRODUCTS MENU
         System.out.println("\n====================================");
@@ -52,13 +52,43 @@ public class SalesModule {
 
                     p.quantity -= q;
 
-                    double total = p.price * q;
+                    // ==========================
+                    // ADDED OFFER LOGIC
+                    // ==========================
 
+                    Offer offer = marketing.getOfferForProduct(p.name);
+
+                    double original = p.price;
+                    double finalPrice = original;
+                    double discount = 0;
+
+                    if (offer != null) {
+                        discount = offer.discount;
+                        finalPrice = original - (original * discount / 100);
+                    }
+
+                    double total = finalPrice * q;
+
+                    System.out.println("\n🧾 ORDER SUMMARY");
+
+                    System.out.println("Product: " + p.name);
+                    System.out.println("Price before: $" + original);
+
+                    if (offer != null) {
+                        System.out.println("Discount: " + discount + "%");
+                        System.out.println("Price after: $" + finalPrice);
+                    } else {
+                        System.out.println("No active offer");
+                        System.out.println("Price after: $" + finalPrice);
+                    }
+
+                    System.out.println("Qty: " + q);
                     System.out.println("✔ Total = " + total);
 
                     user.addPurchase(p.name, q, total);
 
                     System.out.println(" Thank you for your purchase!");
+
                 } else {
                     System.out.println("❌ Not enough stock");
                 }
